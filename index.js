@@ -25,12 +25,18 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        app.get('/myinventory', async (req, res) => {
+            const email = req.query.email
+            const query = {email:email};
+            const cursor = Inventorycollecttion.find(query);
+            const result = await cursor.toArray()
+            res.send(result)
+        })
 
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) };
             const result = await Inventorycollecttion.findOne(query)
-            console.log(result);
             res.send(result)
         })
 

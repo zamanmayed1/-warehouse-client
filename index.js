@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express()
@@ -7,6 +8,8 @@ const app = express()
 // middleware
 app.use(cors())
 app.use(express.json())
+app.use(bodyParser.json())
+
 
 
 
@@ -18,7 +21,7 @@ async function run() {
         await client.connect();
         const Inventorycollecttion = client.db("Inventorycollecttion").collection("Inventory");
 
-   
+
         app.get('/inventory', async (req, res) => {
             const query = {};
             const cursor = Inventorycollecttion.find(query);
@@ -27,7 +30,7 @@ async function run() {
         })
         app.get('/myinventory', async (req, res) => {
             const email = req.query.email
-            const query = {email:email};
+            const query = { email: email };
             const cursor = Inventorycollecttion.find(query);
             const result = await cursor.toArray()
             res.send(result)
@@ -40,10 +43,17 @@ async function run() {
             res.send(result)
         })
 
-        app.post('/additem', async (req , res ) => {
-                const item = req.body
-                const result = await Inventorycollecttion.insertOne(item);
-                res.send(result)
+        app.post('/additem', async (req, res) => {
+            const item = req.body
+            const result = await Inventorycollecttion.insertOne(item);
+            res.send(result)
+
+        })
+        app.delete('/inventory/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) };
+            const result = await Inventorycollecttion.deleteOne(query);
+            res.send(result)
 
         })
 

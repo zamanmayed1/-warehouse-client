@@ -68,6 +68,9 @@ async function run() {
             res.send(result)
 
         })
+        app.get('/', (req, res) => {
+            res.send('Stock Room Server IS Running On Heroku ')
+        })
 
     } finally {
 
@@ -79,9 +82,7 @@ run().catch(console.dir);
 
 
 
-app.get('/', (req, res) => {
-    res.send('Stock Room Server IS Running On Heroku ')
-})
+
 app.listen(port, () => {
     console.log("server is  running on ", port);
 })

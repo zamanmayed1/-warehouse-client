@@ -12,8 +12,6 @@ app.use(express.json())
 app.use(bodyParser.json())
 
 
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.2jmak.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -82,7 +80,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Stock Room Server ')
+    res.send('Stock Room Server IS Running On Heroku ')
 })
 app.listen(port, () => {
     console.log("server is  running on ", port);

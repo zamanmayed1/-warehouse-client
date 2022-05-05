@@ -55,15 +55,15 @@ async function run() {
             const options = { upsert: true };
             const updateDocument = {
                 $set: updatedStock
-              };
-              const result = await   Inventorycollecttion.updateOne(filter, updateDocument, options)
-         
+            };
+            const result = await Inventorycollecttion.updateOne(filter, updateDocument, options)
+
             res.send(result)
 
         })
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id
-            const query = { _id: ObjectId(id) };
+            const query = {_id: ObjectId(id) };
             const result = await Inventorycollecttion.deleteOne(query);
             res.send(result)
 
@@ -79,10 +79,6 @@ async function run() {
 run().catch(console.dir);
 
 
-
-
-
-
 app.listen(port, () => {
-    console.log("server is  running on ", port);
+    console.log("server is  running on heroku ", port);
 })

@@ -12,6 +12,20 @@ app.use(cors())
 app.use(express.json())
 app.use(bodyParser.json())
 
+const verifyJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'unauthorized' });
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'forbidden' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.2jmak.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -21,12 +35,27 @@ async function run() {
         await client.connect();
         const Inventorycollecttion = client.db("Inventorycollecttion").collection("Inventory");
         // auth
-        app.post('/login', async (req , res) => {
-            const user = req.body
-            const accessToken = jwt.sign(user , process.env.ACCESS_TOKEN_SECRET,{
-                expiresIn : '1d',
-            })
-            res.send({accessToken})
+        app.post('/login', async (req, res) => {
+            // const user = req.body
+            // const accessToken = jwt.sign(user , process.env.ACCESS_TOKEN_SECRET,{
+            //     expiresIn : '1d',
+            // })
+            // res.send({accessToken})
+
+            const email = req.body;
+            console.log(user);
+            if (email) {
+                const accessToken = jwt.sign({ email },
+                    process.env.ACCESS_TOKEN_SECRET,
+                    { expiresIn: '1h' })
+                res.send({
+                    success: true,
+                    accessToken: accessToken
+                })
+            }
+            else {
+                res.status(401).send({ success: false });
+            }
         })
 
         app.get('/inventory', async (req, res) => {
@@ -35,7 +64,7 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/myinventory', async (req, res) => {
+        app.get('/myinventory',verifyJWT, async (req, res) => {
             const email = req.query.email
             const query = { email: email };
             const cursor = Inventorycollecttion.find(query);
@@ -71,7 +100,7 @@ async function run() {
         })
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id: ObjectId(id) };
+            const query = { _id: ObjectId(id) };
             const result = await Inventorycollecttion.deleteOne(query);
             res.send(result)
 

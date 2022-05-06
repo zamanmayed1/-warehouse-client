@@ -35,7 +35,7 @@ async function run() {
         await client.connect();
         const Inventorycollecttion = client.db("Inventorycollecttion").collection("Inventory");
         // auth
-        app.post('/login', async (req, res) => {
+        app.post('/login',(req, res) => {
             // const user = req.body
             // const accessToken = jwt.sign(user , process.env.ACCESS_TOKEN_SECRET,{
             //     expiresIn : '1d',
@@ -43,7 +43,6 @@ async function run() {
             // res.send({accessToken})
 
             const email = req.body;
-            console.log(user);
             if (email) {
                 const accessToken = jwt.sign({ email },
                     process.env.ACCESS_TOKEN_SECRET,

@@ -59,8 +59,8 @@ async function run() {
         })
         // My Item with json web token
         app.get('/myinventory', verifyJWT, async (req, res) => {
-            const useremail = req.query.email
-            const query = { email: useremail };
+            const email = req.query.email
+            const query = { email: email };
             const cursor = Inventorycollecttion.find(query);
             const result = await cursor.toArray()
             res.send(result)

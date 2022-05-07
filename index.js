@@ -35,13 +35,7 @@ async function run() {
         await client.connect();
         const Inventorycollecttion = client.db("Inventorycollecttion").collection("Inventory");
         // auth
-        app.post('/login',(req, res) => {
-            // const user = req.body
-            // const accessToken = jwt.sign(user , process.env.ACCESS_TOKEN_SECRET,{
-            //     expiresIn : '1d',
-            // })
-            // res.send({accessToken})
-
+        app.post('/login', (req, res) => {
             const email = req.body;
             if (email) {
                 const accessToken = jwt.sign({ email },
@@ -56,34 +50,36 @@ async function run() {
                 res.status(401).send({ success: false });
             }
         })
-
+        // All Item
         app.get('/inventory', async (req, res) => {
             const query = {};
             const cursor = Inventorycollecttion.find(query);
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/myinventory',verifyJWT, async (req, res) => {
+        // My Item with json web token
+        app.get('/myinventory', verifyJWT, async (req, res) => {
             const email = req.query.email
             const query = { email: email };
             const cursor = Inventorycollecttion.find(query);
             const result = await cursor.toArray()
             res.send(result)
         })
-
+        // Item Details Api
         app.get('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) };
             const result = await Inventorycollecttion.findOne(query)
             res.send(result)
         })
-
+        // Add Item Api
         app.post('/additem', async (req, res) => {
             const item = req.body
             const result = await Inventorycollecttion.insertOne(item);
             res.send(result)
 
         })
+        // Update Stock Api
         app.put('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const updatedStock = req.body
@@ -97,6 +93,7 @@ async function run() {
             res.send(result)
 
         })
+        // Delete Item Api
         app.delete('/inventory/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: ObjectId(id) };
@@ -104,6 +101,7 @@ async function run() {
             res.send(result)
 
         })
+        // Root Api
         app.get('/', (req, res) => {
             res.send('Stock Room Server IS Running On Heroku ')
         })
